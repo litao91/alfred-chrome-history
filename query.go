@@ -1,9 +1,13 @@
 package main
 
 import (
+	"encoding/json"
+	"flag"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/pasela/alfred-chrome-history/history"
 	"github.com/pasela/alfred-chrome-history/utils"
@@ -77,4 +81,37 @@ func (h *historyFile) GetPath() (string, error) {
 		return "", err
 	}
 	return clonedFile, nil
+}
+
+func run() error {
+	var limit int
+	profile := os.Getenv("CHROME_PROFILE")
+	flag.StringVar(&profile, "profile", profile, "Chrome profile directory")
+	flag.IntVar(&limit, "limit", 0, "Limit n results")
+	flag.Parse()
+
+	query := strings.Join(flag.Args(), " ")
+	entries, err := queryHistory(profile, query, query, limit)
+	if err != nil {
+		return err
+	}
+
+	r := make([]map[string]string, 0, 0)
+
+	for _, entry := range entries {
+		i := make(map[string]string)
+		i["text"] = entry.Title
+		i["subtext"] = entry.URL
+		i["arg"] = entry.URL
+		i["plugin"] = "seal_chistory"
+		r = append(r, i)
+	}
+	str, _ := json.Marshal(r)
+	fmt.Println(string(str))
+
+	return nil
+}
+
+func main() {
+	run()
 }
