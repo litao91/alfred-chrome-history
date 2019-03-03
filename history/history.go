@@ -78,6 +78,7 @@ func (h *History) Query(url, title string, limit int) ([]Entry, error) {
 		AND hidden = 0
 	ORDER BY
 		visit_count DESC, typed_count DESC, last_visit_time DESC
+	LIMIT 20
 	`
 	params := []interface{}{
 		u, string(escapeChar),

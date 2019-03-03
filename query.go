@@ -103,7 +103,7 @@ func run() error {
 		i["text"] = entry.Title
 		i["subtext"] = entry.URL
 		i["arg"] = entry.URL
-		i["plugin"] = "seal_chistory"
+		i["plugin"] = "seal_chrome_history"
 		r = append(r, i)
 	}
 	str, _ := json.Marshal(r)
